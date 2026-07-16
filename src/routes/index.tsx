@@ -24,10 +24,10 @@ export const Route = createFileRoute("/")({
         content:
           "Copiloto corporativo com IA generativa que responde dúvidas sobre procedimentos e políticas internas com base em uma base de conhecimento oficial.",
       },
-      { property: "og:title", content: "NexaHelp AI" },
+      { property: "og:title", content: "NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo" },
       {
         property: "og:description",
-        content: "Copiloto Inteligente para Conhecimento Corporativo",
+        content: "Copiloto corporativo com IA generativa que responde dúvidas sobre procedimentos e políticas internas com base em uma base de conhecimento oficial.",
       },
     ],
   }),

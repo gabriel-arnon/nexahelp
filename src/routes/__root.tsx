@@ -79,17 +79,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Copiloto corporativo com IA que responde dúvidas sobre TI, RH, Segurança da Informação, Facilities e políticas internas com base em uma base de conhecimento corporativa.",
+          "Copiloto corporativo com IA generativa que responde dúvidas sobre procedimentos e políticas internas com base em uma base de conhecimento oficial.",
       },
       { name: "author", content: "Gabriel Arnon Figueira de Almeida" },
-      { property: "og:title", content: "NexaHelp AI — Copiloto Corporativo" },
+      { property: "og:title", content: "NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo" },
       {
         property: "og:description",
         content:
-          "Assistente inteligente para dúvidas sobre procedimentos e políticas corporativas.",
+          "Copiloto corporativo com IA generativa que responde dúvidas sobre procedimentos e políticas internas com base em uma base de conhecimento oficial.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo" },
+      { name: "twitter:description", content: "Copiloto corporativo com IA generativa que responde dúvidas sobre procedimentos e políticas internas com base em uma base de conhecimento oficial." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/efee9a0a-a75f-4795-a853-b3b4b96fe4ab/id-preview-1cc0c0df--e49372f7-85fe-4f5a-8e47-2123295c606d.lovable.app-1784176237997.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/efee9a0a-a75f-4795-a853-b3b4b96fe4ab/id-preview-1cc0c0df--e49372f7-85fe-4f5a-8e47-2123295c606d.lovable.app-1784176237997.png" },
     ],
     links: [
       {
