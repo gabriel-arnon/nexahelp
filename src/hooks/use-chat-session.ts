@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { ChatConversation, ChatMessage } from "@/types/chat";
 
 const CURRENT_KEY = "nexahelp:current-session";
@@ -45,11 +45,14 @@ function removeKey(key: string): void {
   }
 }
 
+function hasMessages(conversation: ChatConversation): boolean {
+  return conversation.messages.length > 0;
+}
+
 export function useChatSession() {
   const [current, setCurrent] = useState<ChatConversation>(() => newConversation());
   const [archive, setArchive] = useState<ChatConversation[]>([]);
   const [hydrated, setHydrated] = useState(false);
-  const persistRef = useRef(false);
 
   // Hydrate from localStorage on mount (client-only, avoids SSR mismatch)
   useEffect(() => {
@@ -58,20 +61,28 @@ export function useChatSession() {
     if (savedCurrent && Array.isArray(savedCurrent.messages)) {
       setCurrent(savedCurrent);
     }
-    setArchive(Array.isArray(savedArchive) ? savedArchive : []);
+    setArchive(Array.isArray(savedArchive) ? savedArchive.filter(hasMessages) : []);
     setHydrated(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Persist changes after hydration
   useEffect(() => {
     if (!hydrated) return;
-    writeJSON(CURRENT_KEY, current);
+    if (hasMessages(current)) {
+      writeJSON(CURRENT_KEY, current);
+    } else {
+      removeKey(CURRENT_KEY);
+    }
   }, [current, hydrated]);
 
   useEffect(() => {
     if (!hydrated) return;
-    writeJSON(ARCHIVE_KEY, archive);
+    const conversations = archive.filter(hasMessages);
+    if (conversations.length > 0) {
+      writeJSON(ARCHIVE_KEY, conversations);
+    } else {
+      removeKey(ARCHIVE_KEY);
+    }
   }, [archive, hydrated]);
 
   const appendMessage = useCallback((message: ChatMessage) => {
@@ -82,16 +93,13 @@ export function useChatSession() {
     }));
   }, []);
 
-  const updateMessage = useCallback(
-    (id: string, updater: (m: ChatMessage) => ChatMessage) => {
-      setCurrent((prev) => ({
-        ...prev,
-        updatedAt: Date.now(),
-        messages: prev.messages.map((m) => (m.id === id ? updater(m) : m)),
-      }));
-    },
-    [],
-  );
+  const updateMessage = useCallback((id: string, updater: (m: ChatMessage) => ChatMessage) => {
+    setCurrent((prev) => ({
+      ...prev,
+      updatedAt: Date.now(),
+      messages: prev.messages.map((m) => (m.id === id ? updater(m) : m)),
+    }));
+  }, []);
 
   const removeMessage = useCallback((id: string) => {
     setCurrent((prev) => ({
@@ -107,7 +115,7 @@ export function useChatSession() {
       if (prev.messages.length > 0) {
         setArchive((prevArchive) => {
           const withoutDup = prevArchive.filter((c) => c.id !== prev.id);
-          return [prev, ...withoutDup];
+          return [prev, ...withoutDup].filter(hasMessages);
         });
       }
       return newConversation();
@@ -115,7 +123,6 @@ export function useChatSession() {
   }, []);
 
   const openConversation = useCallback((id: string) => {
-    persistRef.current = true;
     setArchive((prevArchive) => {
       const target = prevArchive.find((c) => c.id === id);
       if (!target) return prevArchive;
@@ -126,7 +133,7 @@ export function useChatSession() {
         }
         return target;
       });
-      return newArchive;
+      return newArchive.filter(hasMessages);
     });
   }, []);
 

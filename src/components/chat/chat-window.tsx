@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useChatSession } from "@/hooks/use-chat-session";
+import { getChatMode } from "@/lib/chat-mode";
 import { askAssistant } from "@/services/chat-service";
 import type { ChatMessage } from "@/types/chat";
 import { Composer } from "./composer";
@@ -44,6 +45,7 @@ export function ChatWindow() {
   const inFlightRef = useRef<string | null>(null);
 
   const messages = current.messages;
+  const isApi = getChatMode() === "api";
 
   // Autoscroll on new messages / loading state
   useEffect(() => {
@@ -139,8 +141,7 @@ export function ChatWindow() {
         }
       })
       .catch((err) => {
-        const message =
-          err instanceof Error ? err.message : "Falha ao gerar a resposta.";
+        const message = err instanceof Error ? err.message : "Falha ao gerar a resposta.";
         if (lastAssistant) {
           updateMessage(lastAssistant.id, (m) => ({
             ...m,
@@ -169,8 +170,9 @@ export function ChatWindow() {
               <ModeBadge />
             </div>
             <p className="text-sm text-muted-foreground">
-              Responde com base em procedimentos internos, políticas e serviços
-              corporativos da empresa.
+              {isApi
+                ? "Responde com base em procedimentos internos, políticas e serviços corporativos da empresa."
+                : "Modo de demonstração com respostas demonstrativas sobre documentos corporativos simulados."}
             </p>
             <ModeNotice />
           </div>
@@ -206,16 +208,13 @@ export function ChatWindow() {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Limpar histórico?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Todas as conversas armazenadas neste navegador (atual e
-                    anteriores) serão removidas definitivamente. Esta ação não
-                    pode ser desfeita.
+                    Todas as conversas armazenadas neste navegador (atual e anteriores) serão
+                    removidas definitivamente. Esta ação não pode ser desfeita.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction onClick={clearAllHistory}>
-                    Limpar tudo
-                  </AlertDialogAction>
+                  <AlertDialogAction onClick={clearAllHistory}>Limpar tudo</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -239,9 +238,7 @@ export function ChatWindow() {
         ) : messages.length === 0 ? (
           <div className="flex h-full flex-col justify-center gap-6">
             <div className="text-center">
-              <h2 className="text-lg font-semibold text-foreground">
-                Como posso ajudar hoje?
-              </h2>
+              <h2 className="text-lg font-semibold text-foreground">Como posso ajudar hoje?</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Escolha uma pergunta sugerida ou digite sua dúvida abaixo.
               </p>
@@ -265,7 +262,9 @@ export function ChatWindow() {
             {loading && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                Consultando base de conhecimento...
+                {isApi
+                  ? "Consultando base de conhecimento..."
+                  : "Consultando base de conhecimento fictícia..."}
               </div>
             )}
           </div>
@@ -282,10 +281,7 @@ export function ChatWindow() {
         loading={loading}
       />
 
-      <SourceDialog
-        documentId={sourceId}
-        onOpenChange={(open) => !open && setSourceId(null)}
-      />
+      <SourceDialog documentId={sourceId} onOpenChange={(open) => !open && setSourceId(null)} />
     </div>
   );
 }

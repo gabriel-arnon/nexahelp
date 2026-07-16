@@ -74,11 +74,7 @@ export function HistoryPanel({ conversations, onOpen, onDelete }: HistoryPanelPr
                   key={c.id}
                   className="flex items-start gap-2 rounded-lg border border-border bg-card p-3 transition-colors hover:border-primary/40"
                 >
-                  <button
-                    type="button"
-                    onClick={() => onOpen(c.id)}
-                    className="flex-1 text-left"
-                  >
+                  <button type="button" onClick={() => onOpen(c.id)} className="flex-1 text-left">
                     <p className="line-clamp-2 text-sm font-medium text-foreground">
                       {titleFor(c)}
                     </p>
@@ -102,8 +98,8 @@ export function HistoryPanel({ conversations, onOpen, onDelete }: HistoryPanelPr
                       <AlertDialogHeader>
                         <AlertDialogTitle>Excluir conversa</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Esta ação não pode ser desfeita. A conversa será removida
-                          apenas deste navegador.
+                          Esta ação não pode ser desfeita. A conversa será removida apenas deste
+                          navegador.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>

@@ -1,6 +1,6 @@
 # NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo
 
-Aplicação web acadêmica que simula um copiloto corporativo com IA generativa. Colaboradores podem fazer perguntas em linguagem natural sobre procedimentos internos, políticas, TI, RH, Segurança da Informação, Facilities e serviços administrativos, recebendo respostas com as fontes consultadas.
+Aplicação web acadêmica que simula um copiloto corporativo para conhecimento interno. Colaboradores podem fazer perguntas em linguagem natural sobre procedimentos internos, políticas, TI, RH, Segurança da Informação, Facilities e serviços administrativos, recebendo respostas demonstrativas com fontes simuladas.
 
 ## Objetivo
 
@@ -21,7 +21,7 @@ Esta primeira versão utiliza **respostas simuladas** (mock) sobre uma base fict
   - autoscroll, retorno de foco ao campo, `aria-live` na área de respostas;
   - badge dinâmico "Modo de demonstração" / "IA conectada" conforme `VITE_CHAT_MODE`;
   - fontes clicáveis que abrem um diálogo com o documento completo.
-- Base de conhecimento com **20 documentos** fictícios organizados em 5 categorias, com busca e filtro.
+- Base de conhecimento fictícia com **20 documentos** simulados organizados em 5 categorias, com busca e filtro.
 - Página de governança com princípios de uso responsável de IA.
 - Layout responsivo, acessível e em português do Brasil.
 
@@ -29,7 +29,7 @@ Esta primeira versão utiliza **respostas simuladas** (mock) sobre uma base fict
 
 - [TanStack Start](https://tanstack.com/start) v1 (framework React full-stack)
 - React 19 + TypeScript
-- Vite 7
+- Vite 8
 - Tailwind CSS v4 (CSS-first, `@theme`)
 - shadcn/ui (Radix UI + Tailwind)
 - lucide-react (ícones)
@@ -37,7 +37,9 @@ Esta primeira versão utiliza **respostas simuladas** (mock) sobre uma base fict
 
 ## Ferramentas de IA utilizadas no desenvolvimento
 
-- **Lovable** — ambiente de desenvolvimento assistido por IA, utilizado como copiloto de código durante todo o processo de construção da aplicação (arquitetura, componentes, textos e revisões).
+- **Lovable** — geração inicial da interface e arquitetura.
+- **ChatGPT** — planejamento, engenharia de prompts e revisão do escopo.
+- **Codex** — auditoria, revisão de código, correções e validação técnica.
 
 ## Como executar
 
@@ -57,7 +59,7 @@ bun run build
 bun run lint
 ```
 
-A aplicação abre em `http://localhost:8080` por padrão.
+Não há porta explícita definida nos scripts do projeto. O servidor de desenvolvimento usa a configuração do Vite/Lovable e o terminal exibirá a URL local em uso ao executar `bun run dev`.
 
 ## Variáveis de ambiente
 
@@ -84,7 +86,7 @@ src/
   hooks/
     use-chat-session.ts       # persistência da conversa em localStorage
   lib/
-    knowledge-base.ts         # 20 documentos fictícios
+    knowledge-base.ts         # 20 documentos fictícios/simulados
     mock-answers.ts           # regras de respostas simuladas (retorna IDs)
   services/
     chat-service.ts           # camada única consumida pelo chat (mock | api)
@@ -107,7 +109,7 @@ docs/
 - Sem backend: todas as respostas vêm de regras locais em `src/lib/mock-answers.ts`.
 - Sem autenticação e sem integração real com IA.
 - Sem persistência em banco de dados: o histórico de conversas fica apenas no navegador (`localStorage`) e é único por dispositivo/perfil.
-- A base de conhecimento é fictícia e serve apenas para demonstração acadêmica.
+- A base de conhecimento é fictícia, com documentos corporativos simulados, e serve apenas para demonstração acadêmica.
 
 ## Identificação acadêmica
 

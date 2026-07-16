@@ -9,8 +9,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "ti-001",
     titulo: "Redefinição de senha corporativa",
     categoria: "Tecnologia da Informação",
-    descricao:
-      "Procedimento oficial para redefinir a senha de acesso aos sistemas corporativos.",
+    descricao: "Procedimento oficial para redefinir a senha de acesso aos sistemas corporativos.",
     conteudo:
       "1. Acesse o portal interno de acesso em https://acesso.empresa.local.\n" +
       "2. Clique em 'Esqueci minha senha' na tela de login.\n" +
@@ -26,8 +25,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "ti-002",
     titulo: "Abertura de chamado de suporte",
     categoria: "Tecnologia da Informação",
-    descricao:
-      "Como registrar um chamado para o setor de TI através do Portal de Serviços.",
+    descricao: "Como registrar um chamado para o setor de TI através do Portal de Serviços.",
     conteudo:
       "Todos os chamados de TI devem ser registrados exclusivamente pelo Portal de Serviços interno, disponível em https://servicos.empresa.local.\n\n" +
       "Passo a passo:\n" +
@@ -45,8 +43,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "ti-003",
     titulo: "Instalação de programas homologados",
     categoria: "Tecnologia da Informação",
-    descricao:
-      "Regras para solicitar e instalar softwares em equipamentos corporativos.",
+    descricao: "Regras para solicitar e instalar softwares em equipamentos corporativos.",
     conteudo:
       "Apenas softwares homologados pela área de TI podem ser instalados em equipamentos corporativos. A instalação por conta própria não é permitida e pode configurar violação da Política de Uso Aceitável.\n\n" +
       "Para solicitar a instalação de um novo software:\n" +
@@ -63,8 +60,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "ti-004",
     titulo: "Solicitação e devolução de equipamentos",
     categoria: "Tecnologia da Informação",
-    descricao:
-      "Processo para retirada, empréstimo e devolução de equipamentos corporativos.",
+    descricao: "Processo para retirada, empréstimo e devolução de equipamentos corporativos.",
     conteudo:
       "Novos colaboradores recebem o kit padrão (notebook, mouse, headset) por meio da integração com o RH e a TI. Solicitações adicionais devem seguir o fluxo abaixo:\n\n" +
       "1. Abra um chamado no Portal de Serviços, categoria 'Hardware > Solicitação'.\n" +
@@ -85,8 +81,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "rh-001",
     titulo: "Solicitação de férias",
     categoria: "Recursos Humanos",
-    descricao:
-      "Regras e prazos para a solicitação de férias no sistema de RH.",
+    descricao: "Regras e prazos para a solicitação de férias no sistema de RH.",
     conteudo:
       "As férias devem ser solicitadas com antecedência mínima de 30 dias, respeitando o período aquisitivo e a legislação trabalhista vigente.\n\n" +
       "Passo a passo:\n" +
@@ -104,8 +99,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "rh-002",
     titulo: "Registro e correção de ponto",
     categoria: "Recursos Humanos",
-    descricao:
-      "Como registrar o ponto diariamente e como solicitar correções.",
+    descricao: "Como registrar o ponto diariamente e como solicitar correções.",
     conteudo:
       "O registro de ponto é obrigatório para todos os colaboradores em regime CLT e deve ser feito no aplicativo corporativo de ponto ou no relógio biométrico da unidade.\n\n" +
       "Registro:\n" +
@@ -125,8 +119,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "rh-003",
     titulo: "Entrega de atestado médico",
     categoria: "Recursos Humanos",
-    descricao:
-      "Como enviar atestados médicos ao RH dentro do prazo.",
+    descricao: "Como enviar atestados médicos ao RH dentro do prazo.",
     conteudo:
       "Atestados médicos devem ser encaminhados ao RH em até 48 horas após a emissão, para justificar ausências e evitar descontos.\n\n" +
       "Como enviar:\n" +
@@ -143,8 +136,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "rh-004",
     titulo: "Atualização de dados cadastrais",
     categoria: "Recursos Humanos",
-    descricao:
-      "Como manter seus dados pessoais atualizados no sistema de RH.",
+    descricao: "Como manter seus dados pessoais atualizados no sistema de RH.",
     conteudo:
       "Manter os dados cadastrais atualizados é responsabilidade de cada colaborador, especialmente endereço, telefone, e-mail pessoal, estado civil e dependentes.\n\n" +
       "Passo a passo:\n" +
@@ -163,8 +155,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "si-001",
     titulo: "Identificação de e-mails suspeitos (phishing)",
     categoria: "Segurança da Informação",
-    descricao:
-      "Sinais de phishing e como agir ao receber um e-mail suspeito.",
+    descricao: "Sinais de phishing e como agir ao receber um e-mail suspeito.",
     conteudo:
       "E-mails de phishing tentam induzir o colaborador a clicar em links, baixar anexos ou fornecer credenciais.\n\n" +
       "Sinais de alerta:\n" +
@@ -186,8 +177,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "si-002",
     titulo: "Política de criação e uso de senhas",
     categoria: "Segurança da Informação",
-    descricao:
-      "Requisitos mínimos de senha e boas práticas de uso.",
+    descricao: "Requisitos mínimos de senha e boas práticas de uso.",
     conteudo:
       "Toda senha corporativa deve atender aos seguintes requisitos:\n" +
       "- No mínimo 12 caracteres.\n" +
@@ -208,8 +198,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "si-003",
     titulo: "Compartilhamento seguro de informações",
     categoria: "Segurança da Informação",
-    descricao:
-      "Regras para compartilhar documentos e informações corporativas.",
+    descricao: "Regras para compartilhar documentos e informações corporativas.",
     conteudo:
       "Informações corporativas são classificadas em quatro níveis: pública, interna, confidencial e restrita. Cada nível possui regras específicas de compartilhamento.\n\n" +
       "Diretrizes:\n" +
@@ -227,8 +216,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "si-004",
     titulo: "Comunicação de incidentes de segurança",
     categoria: "Segurança da Informação",
-    descricao:
-      "Como reportar suspeitas ou confirmações de incidentes de segurança.",
+    descricao: "Como reportar suspeitas ou confirmações de incidentes de segurança.",
     conteudo:
       "Qualquer suspeita de incidente deve ser comunicada imediatamente, mesmo sem certeza da gravidade. Um incidente pode envolver acesso indevido, perda ou roubo de equipamento, vazamento de dados, malware, engenharia social, entre outros.\n\n" +
       "Canais oficiais:\n" +
@@ -246,8 +234,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "fa-001",
     titulo: "Solicitação de manutenção de equipamentos",
     categoria: "Facilities e serviços internos",
-    descricao:
-      "Como pedir manutenção corretiva ou preventiva de mobiliário e equipamentos.",
+    descricao: "Como pedir manutenção corretiva ou preventiva de mobiliário e equipamentos.",
     conteudo:
       "Solicitações de manutenção referem-se a mobiliário, ar-condicionado, iluminação, cadeiras, mesas ajustáveis e demais itens de infraestrutura.\n\n" +
       "Passo a passo:\n" +
@@ -264,8 +251,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "fa-002",
     titulo: "Reserva de salas de reunião",
     categoria: "Facilities e serviços internos",
-    descricao:
-      "Como reservar salas de reunião e boas práticas de uso.",
+    descricao: "Como reservar salas de reunião e boas práticas de uso.",
     conteudo:
       "As salas de reunião podem ser reservadas pelo calendário corporativo integrado ao sistema de agendamento.\n\n" +
       "Como reservar:\n" +
@@ -285,8 +271,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "fa-003",
     titulo: "Solicitação de material de escritório",
     categoria: "Facilities e serviços internos",
-    descricao:
-      "Como solicitar itens de papelaria e insumos de escritório.",
+    descricao: "Como solicitar itens de papelaria e insumos de escritório.",
     conteudo:
       "Materiais de escritório (canetas, blocos, tonner, pilhas, itens de copa) são solicitados pelo Portal de Serviços, categoria 'Facilities > Materiais'.\n\n" +
       "Regras:\n" +
@@ -302,8 +287,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "fa-004",
     titulo: "Acesso e crachá de visitantes",
     categoria: "Facilities e serviços internos",
-    descricao:
-      "Como cadastrar visitantes e regras de acesso às unidades.",
+    descricao: "Como cadastrar visitantes e regras de acesso às unidades.",
     conteudo:
       "O acesso de visitantes deve ser previamente autorizado pelo colaborador anfitrião.\n\n" +
       "Cadastro:\n" +
@@ -325,8 +309,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "pc-001",
     titulo: "Política de trabalho remoto",
     categoria: "Políticas corporativas",
-    descricao:
-      "Regras, elegibilidade e responsabilidades no trabalho remoto.",
+    descricao: "Regras, elegibilidade e responsabilidades no trabalho remoto.",
     conteudo:
       "O modelo de trabalho remoto é oferecido em regime híbrido, com percentuais definidos por área e função. A elegibilidade é avaliada pelo gestor imediato, considerando maturidade do cargo, natureza das atividades e desempenho.\n\n" +
       "Responsabilidades do colaborador em regime remoto:\n" +
@@ -343,8 +326,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "pc-002",
     titulo: "Código de conduta e ética",
     categoria: "Políticas corporativas",
-    descricao:
-      "Princípios éticos e padrões de conduta esperados de todos os colaboradores.",
+    descricao: "Princípios éticos e padrões de conduta esperados de todos os colaboradores.",
     conteudo:
       "O Código de Conduta orienta o comportamento profissional e ético de todos os colaboradores, fornecedores e parceiros.\n\n" +
       "Princípios:\n" +
@@ -362,8 +344,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "pc-003",
     titulo: "Política de uso aceitável de recursos",
     categoria: "Políticas corporativas",
-    descricao:
-      "Regras de uso de equipamentos, sistemas, internet e e-mail corporativos.",
+    descricao: "Regras de uso de equipamentos, sistemas, internet e e-mail corporativos.",
     conteudo:
       "Os recursos tecnológicos corporativos (equipamentos, sistemas, internet, e-mail, telefone) são disponibilizados para uso profissional.\n\n" +
       "É permitido:\n" +
@@ -382,8 +363,7 @@ export const KNOWLEDGE_BASE: KnowledgeDocument[] = [
     id: "pc-004",
     titulo: "Política de viagens e reembolsos",
     categoria: "Políticas corporativas",
-    descricao:
-      "Regras para viagens a serviço, adiantamentos e prestação de contas.",
+    descricao: "Regras para viagens a serviço, adiantamentos e prestação de contas.",
     conteudo:
       "Viagens a serviço devem ser previamente aprovadas pelo gestor e registradas no sistema de viagens corporativo.\n\n" +
       "Antes da viagem:\n" +
@@ -408,7 +388,5 @@ export function getDocumentById(id: string): KnowledgeDocument | undefined {
 }
 
 export function getDocumentsByIds(ids: string[]): KnowledgeDocument[] {
-  return ids
-    .map((id) => getDocumentById(id))
-    .filter((d): d is KnowledgeDocument => Boolean(d));
+  return ids.map((id) => getDocumentById(id)).filter((d): d is KnowledgeDocument => Boolean(d));
 }

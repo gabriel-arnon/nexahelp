@@ -14,23 +14,36 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getChatMode } from "@/lib/chat-mode";
+
+function getHomeDescription(): string {
+  if (getChatMode() === "api") {
+    return "Copiloto corporativo com IA generativa que responde dúvidas sobre procedimentos e políticas internas com base em uma base de conhecimento corporativa.";
+  }
+  return "Aplicação acadêmica em modo de demonstração que simula um copiloto corporativo com respostas demonstrativas sobre uma base de conhecimento fictícia.";
+}
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo" },
-      {
-        name: "description",
-        content:
-          "Copiloto corporativo com IA generativa que responde dúvidas sobre procedimentos e políticas internas com base em uma base de conhecimento oficial.",
-      },
-      { property: "og:title", content: "NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo" },
-      {
-        property: "og:description",
-        content: "Copiloto corporativo com IA generativa que responde dúvidas sobre procedimentos e políticas internas com base em uma base de conhecimento oficial.",
-      },
-    ],
-  }),
+  head: () => {
+    const description = getHomeDescription();
+    return {
+      meta: [
+        { title: "NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo" },
+        {
+          name: "description",
+          content: description,
+        },
+        {
+          property: "og:title",
+          content: "NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo",
+        },
+        {
+          property: "og:description",
+          content: description,
+        },
+      ],
+    };
+  },
   component: HomePage,
 });
 
@@ -38,59 +51,84 @@ const AREAS = [
   {
     icon: CircuitBoard,
     titulo: "Tecnologia da Informação",
-    descricao:
-      "Acessos, chamados, softwares homologados e equipamentos corporativos.",
+    descricao: "Acessos, chamados, softwares homologados e equipamentos corporativos.",
   },
   {
     icon: Users,
     titulo: "Recursos Humanos",
-    descricao:
-      "Férias, ponto, atestados e atualização de dados cadastrais.",
+    descricao: "Férias, ponto, atestados e atualização de dados cadastrais.",
   },
   {
     icon: ShieldCheck,
     titulo: "Segurança da Informação",
-    descricao:
-      "Phishing, senhas, classificação da informação e incidentes.",
+    descricao: "Phishing, senhas, classificação da informação e incidentes.",
   },
   {
     icon: Building2,
     titulo: "Facilities e serviços internos",
-    descricao:
-      "Manutenção, salas de reunião, materiais e acesso de visitantes.",
+    descricao: "Manutenção, salas de reunião, materiais e acesso de visitantes.",
   },
   {
     icon: UserCog,
     titulo: "Políticas corporativas",
-    descricao:
-      "Trabalho remoto, código de conduta, uso aceitável e viagens.",
+    descricao: "Trabalho remoto, código de conduta, uso aceitável e viagens.",
   },
 ];
 
-const BENEFITS = [
-  {
-    titulo: "Respostas rápidas",
-    descricao:
-      "Reduza o tempo gasto procurando informações em manuais e intranet.",
-  },
-  {
-    titulo: "Fontes rastreáveis",
-    descricao:
-      "Cada resposta cita os documentos oficiais consultados.",
-  },
-  {
-    titulo: "Padronização",
-    descricao:
-      "Orientações consistentes, alinhadas às políticas da empresa.",
-  },
-  {
-    titulo: "Disponível 24/7",
-    descricao:
-      "Consulte procedimentos a qualquer momento, pelo navegador.",
-  },
-];
+function getBenefits(isApi: boolean) {
+  return [
+    {
+      titulo: "Respostas rápidas",
+      descricao: "Reduza o tempo gasto procurando informações em manuais e intranet.",
+    },
+    {
+      titulo: "Fontes rastreáveis",
+      descricao: isApi
+        ? "Cada resposta cita os documentos corporativos consultados."
+        : "Cada resposta demonstrativa cita documentos corporativos simulados.",
+    },
+    {
+      titulo: "Padronização",
+      descricao: isApi
+        ? "Orientações consistentes, alinhadas às políticas da empresa."
+        : "Orientações demonstrativas consistentes para fins acadêmicos.",
+    },
+    {
+      titulo: "Disponível 24/7",
+      descricao: "Consulte procedimentos a qualquer momento, pelo navegador.",
+    },
+  ];
+}
+
+function getHowItWorksSteps(isApi: boolean) {
+  return [
+    {
+      icon: MessageSquare,
+      titulo: "1. Você pergunta",
+      descricao: "Escreva sua dúvida em linguagem natural, como faria com um colega.",
+    },
+    {
+      icon: FileSearch,
+      titulo: "2. O assistente consulta a base",
+      descricao: isApi
+        ? "O assistente consulta a base e gera uma resposta contextualizada."
+        : "O assistente consulta documentos corporativos simulados da base fictícia.",
+    },
+    {
+      icon: Bot,
+      titulo: "3. Você recebe a resposta",
+      descricao: isApi
+        ? "Orientação objetiva com as fontes consultadas para conferência."
+        : "Resposta demonstrativa com fontes simuladas para conferência.",
+    },
+  ];
+}
 
 function HomePage() {
+  const isApi = getChatMode() === "api";
+  const benefits = getBenefits(isApi);
+  const howItWorksSteps = getHowItWorksSteps(isApi);
+
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6">
       {/* Hero */}
@@ -98,7 +136,9 @@ function HomePage() {
         <div className="space-y-6">
           <Badge variant="secondary" className="gap-1.5">
             <Sparkles className="h-3.5 w-3.5" aria-hidden />
-            IA Generativa aplicada ao conhecimento corporativo
+            {isApi
+              ? "IA Generativa aplicada ao conhecimento corporativo"
+              : "Modo de demonstração acadêmica"}
           </Badge>
           <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             NexaHelp <span className="text-primary">AI</span>
@@ -107,10 +147,9 @@ function HomePage() {
             Copiloto Inteligente para Conhecimento Corporativo
           </p>
           <p className="max-w-xl text-base leading-relaxed text-muted-foreground">
-            Um assistente corporativo que responde dúvidas sobre procedimentos internos,
-            políticas, tecnologia da informação, recursos humanos, segurança e serviços
-            administrativos — consultando uma base de conhecimento oficial e apresentando
-            fontes verificáveis.
+            {isApi
+              ? "Um assistente corporativo que responde dúvidas sobre procedimentos internos, políticas, tecnologia da informação, recursos humanos, segurança e serviços administrativos — consultando uma base de conhecimento corporativa e apresentando fontes verificáveis."
+              : "Uma versão acadêmica que simula um assistente corporativo para dúvidas sobre procedimentos internos, políticas, tecnologia da informação, recursos humanos, segurança e serviços administrativos — usando respostas demonstrativas e uma base de conhecimento fictícia."}
           </p>
           <div className="flex flex-wrap gap-3">
             <Button asChild size="lg">
@@ -124,8 +163,9 @@ function HomePage() {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            As respostas são geradas por IA e podem conter imprecisões — confirme
-            informações críticas com o setor responsável.
+            {isApi
+              ? "Respostas geradas por Inteligência Artificial podem conter imprecisões — confirme informações críticas com o setor responsável."
+              : "As respostas são demonstrativas e podem conter simplificações — confirme informações críticas com o setor responsável."}
           </p>
         </div>
         <div className="relative">
@@ -135,10 +175,10 @@ function HomePage() {
                 <Bot className="h-4 w-4" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">
-                  Assistente Corporativo
+                <p className="text-sm font-semibold text-foreground">Assistente Corporativo</p>
+                <p className="text-xs text-muted-foreground">
+                  {isApi ? "IA conectada" : "Demonstração"}
                 </p>
-                <p className="text-xs text-muted-foreground">Online</p>
               </div>
             </div>
             <div className="space-y-3 text-sm">
@@ -148,11 +188,11 @@ function HomePage() {
                 </div>
               </div>
               <div className="max-w-[90%] rounded-2xl rounded-tl-sm border border-border bg-muted/40 px-3 py-2 text-foreground">
-                Acesse o portal interno de acesso e selecione "Esqueci minha senha".
-                Siga as instruções enviadas ao seu e-mail corporativo.
+                Acesse o portal interno de acesso e selecione "Esqueci minha senha". Siga as
+                instruções enviadas ao seu e-mail corporativo.
                 <div className="mt-2 border-t border-border/60 pt-2 text-xs text-muted-foreground">
-                  <span className="font-semibold">Fontes:</span> Redefinição de Senha,
-                  Política de Senhas
+                  <span className="font-semibold">{isApi ? "Fontes:" : "Fontes simuladas:"}</span>{" "}
+                  Redefinição de Senha, Política de Senhas
                 </div>
               </div>
             </div>
@@ -163,34 +203,13 @@ function HomePage() {
       {/* Como funciona */}
       <section className="border-t border-border py-14">
         <div className="max-w-2xl">
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-            Como funciona
-          </h2>
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">Como funciona</h2>
           <p className="mt-2 text-muted-foreground">
             Três passos para transformar dúvidas em orientações confiáveis.
           </p>
         </div>
         <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {[
-            {
-              icon: MessageSquare,
-              titulo: "1. Você pergunta",
-              descricao:
-                "Escreva sua dúvida em linguagem natural, como faria com um colega.",
-            },
-            {
-              icon: FileSearch,
-              titulo: "2. A IA consulta a base",
-              descricao:
-                "O assistente consulta procedimentos e políticas corporativas oficiais.",
-            },
-            {
-              icon: Bot,
-              titulo: "3. Você recebe a resposta",
-              descricao:
-                "Orientação objetiva com as fontes consultadas para conferência.",
-            },
-          ].map(({ icon: Icon, titulo, descricao }) => (
+          {howItWorksSteps.map(({ icon: Icon, titulo, descricao }) => (
             <Card key={titulo}>
               <CardHeader>
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -209,9 +228,7 @@ function HomePage() {
       {/* Áreas atendidas */}
       <section className="border-t border-border py-14">
         <div className="max-w-2xl">
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-            Áreas atendidas
-          </h2>
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">Áreas atendidas</h2>
           <p className="mt-2 text-muted-foreground">
             O NexaHelp AI cobre as principais frentes de dúvidas dos colaboradores.
           </p>
@@ -236,19 +253,14 @@ function HomePage() {
       {/* Benefícios */}
       <section className="border-t border-border py-14">
         <div className="max-w-2xl">
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-            Benefícios
-          </h2>
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">Benefícios</h2>
           <p className="mt-2 text-muted-foreground">
             Ganhos práticos para colaboradores e para a organização.
           </p>
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {BENEFITS.map(({ titulo, descricao }) => (
-            <div
-              key={titulo}
-              className="rounded-xl border border-border bg-card p-5"
-            >
+          {benefits.map(({ titulo, descricao }) => (
+            <div key={titulo} className="rounded-xl border border-border bg-card p-5">
               <h3 className="text-sm font-semibold text-foreground">{titulo}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{descricao}</p>
             </div>
@@ -265,12 +277,14 @@ function HomePage() {
             </div>
             <div>
               <p className="text-sm font-semibold text-foreground">
-                Aviso sobre respostas geradas por IA
+                {isApi
+                  ? "Aviso sobre respostas geradas por Inteligência Artificial"
+                  : "Aviso sobre respostas demonstrativas"}
               </p>
               <p className="mt-1 text-sm text-muted-foreground">
-                As respostas são produzidas por Inteligência Artificial e podem conter
-                imprecisões. Sempre confirme informações críticas com o setor
-                responsável e consulte os documentos oficiais.
+                {isApi
+                  ? "As respostas são produzidas por Inteligência Artificial e podem conter imprecisões. Sempre confirme informações críticas com o setor responsável e consulte os documentos corporativos."
+                  : "Esta versão usa respostas demonstrativas sobre documentos corporativos simulados. Sempre confirme informações críticas com o setor responsável."}
               </p>
             </div>
           </div>

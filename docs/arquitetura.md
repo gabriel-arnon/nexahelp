@@ -7,7 +7,7 @@ versão.
 ## Visão geral
 
 Aplicação SPA/SSR construída com **TanStack Start** (React 19 + TypeScript +
-Vite 7) e **Tailwind CSS v4 (CSS-first)** + **shadcn/ui**. Toda a lógica
+Vite 8) e **Tailwind CSS v4 (CSS-first)** + **shadcn/ui**. Toda a lógica
 desta versão executa no cliente; não há backend próprio nem banco de dados.
 
 ## Camadas do chat
@@ -48,9 +48,14 @@ mock-answers.ts   (futuro) POST /api/chat → servidor → OpenAI
   sob duas chaves:
   - `nexahelp:current-session` — conversa em andamento;
   - `nexahelp:conversations` — histórico de conversas encerradas.
+- A sessão atual só é persistida quando possui pelo menos uma mensagem.
+- O arquivo de conversas anteriores só é persistido quando há conversas com
+  mensagens. Conversas vazias não são armazenadas nem exibidas no histórico.
 - "Nova conversa" arquiva a sessão atual **somente se** ela tiver ao menos
   uma mensagem. Sessões vazias são descartadas.
-- "Limpar histórico" apaga definitivamente as duas chaves.
+- "Limpar histórico" remove as duas chaves e reinicia a interface sem recriar
+  uma sessão vazia no `localStorage`. A próxima sessão volta a ser persistida
+  após o envio da primeira mensagem.
 
 ## Base de conhecimento
 
@@ -99,10 +104,17 @@ ChatWindow → chat-service.ts → POST /api/chat → servidor → OpenAI
 
 ### Ponto de extensão já pronto
 
-Em `src/services/chat-service.ts` o ramo `mode === "api"` é o único ponto que
-precisará ser implementado quando a integração real chegar. Hoje ele lança
-um erro amigável indicando que a integração real ainda não foi configurada,
-evitando qualquer chamada de rede acidental.
+Em `src/services/chat-service.ts` o ramo `mode === "api"` é o ponto que
+passará a chamar `POST /api/chat` quando a integração real chegar. Hoje ele
+lança um erro amigável indicando que a integração real ainda não foi
+configurada, evitando qualquer chamada de rede acidental.
+
+Para este projeto, a abordagem recomendada é uma **server route do TanStack
+Start** em `src/routes/api/chat.ts`, porque o contrato desejado é um endpoint
+HTTP (`POST /api/chat`) e a aplicação já usa TanStack Start como camada
+full-stack. `createServerFn` é mais adequado para chamadas RPC internas da
+própria aplicação, enquanto Supabase Edge Function adicionaria uma plataforma
+externa que o projeto ainda não utiliza.
 
 Exemplo de implementação futura (esboço):
 
@@ -119,8 +131,7 @@ if (mode === "api") {
 }
 ```
 
-E no servidor, em uma rota TanStack (`src/routes/api/chat.ts`) ou um
-`createServerFn`:
+E no servidor, em uma server route TanStack (`src/routes/api/chat.ts`):
 
 ```ts
 // esboço — não implementar antes de habilitar o modo "api"

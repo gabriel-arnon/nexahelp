@@ -1,4 +1,5 @@
 import { FileText } from "lucide-react";
+import { getChatMode } from "@/lib/chat-mode";
 import { getDocumentById } from "@/lib/knowledge-base";
 
 interface SourceListProps {
@@ -7,17 +8,16 @@ interface SourceListProps {
 }
 
 export function SourceList({ ids, onOpen }: SourceListProps) {
+  const isApi = getChatMode() === "api";
   if (!ids || ids.length === 0) return null;
-  const docs = ids
-    .map((id) => ({ id, doc: getDocumentById(id) }))
-    .filter((x) => x.doc);
+  const docs = ids.map((id) => ({ id, doc: getDocumentById(id) })).filter((x) => x.doc);
 
   if (docs.length === 0) return null;
 
   return (
     <div className="mt-3 border-t border-border/60 pt-3">
       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        Fontes consultadas
+        {isApi ? "Fontes consultadas" : "Fontes simuladas"}
       </p>
       <ul className="mt-2 flex flex-wrap gap-2">
         {docs.map(({ id, doc }) => (
