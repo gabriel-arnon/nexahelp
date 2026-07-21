@@ -80,10 +80,11 @@ Não há porta explícita definida nos scripts. O servidor de desenvolvimento us
 2. Em `mock`, a resposta vem de regras locais.
 3. Em `api`, o serviço faz `POST /api/chat`.
 4. A rota valida o corpo com Zod.
-5. A busca local seleciona até 4 documentos relevantes.
+5. A busca local seleciona até 4 documentos relevantes, priorizando a pergunta atual.
 6. Se nenhum documento atingir a pontuação mínima, a rota responde sem chamar a OpenAI.
-7. Se houver contexto e `OPENAI_API_KEY`, a rota chama a Responses API com `store: false`.
-8. O retorno ao navegador contém apenas:
+7. Perguntas independentes não enviam histórico ao modelo; continuações contextuais usam apenas a última pergunta relevante do usuário.
+8. Se houver contexto e `OPENAI_API_KEY`, a rota chama a Responses API com `store: false`.
+9. O retorno ao navegador contém apenas:
 
 ```json
 {

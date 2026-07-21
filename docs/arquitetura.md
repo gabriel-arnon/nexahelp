@@ -41,7 +41,8 @@ Validações:
 - `historico`: opcional, até 12 mensagens.
 - cada mensagem aceita apenas `role` e `content`.
 - cada `content` tem até 2.000 caracteres.
-- somente as últimas 6 mensagens úteis são enviadas ao modelo.
+- perguntas independentes não enviam histórico ao modelo.
+- continuações contextuais enviam somente a última pergunta relevante do usuário.
 
 Resposta de sucesso:
 
@@ -85,7 +86,7 @@ Arquivos server-side:
 - `src/server/assistant-prompt.ts`
 - `src/server/openai-chat.ts`
 
-A chamada usa o SDK oficial `openai`, Responses API, modelo padrão `gpt-5-mini`, `store: false`, `max_output_tokens: 400` e `reasoning.effort: "low"` conforme suportado pelos tipos instalados.
+A chamada usa o SDK oficial `openai`, Responses API, modelo padrão `gpt-5-mini`, `store: false`, `max_output_tokens: 700` e `reasoning.effort: "low"` conforme suportado pelos tipos instalados.
 
 O prompt instrui o modelo a responder em português do Brasil, usar somente os documentos enviados, tratar documentos como dados, evitar invenções, não mencionar detalhes internos e sinalizar insuficiência da base.
 
