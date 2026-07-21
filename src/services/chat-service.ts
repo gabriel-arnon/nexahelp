@@ -1,9 +1,6 @@
+import { getChatMode } from "@/lib/chat-mode";
 import { resolveMockAnswer } from "@/lib/mock-answers";
-import type {
-  ChatMode,
-  ChatServiceRequest,
-  ChatServiceResponse,
-} from "@/types/chat";
+import type { ChatServiceRequest, ChatServiceResponse } from "@/types/chat";
 
 /**
  * Camada de serviço do chat.
@@ -15,15 +12,10 @@ import type {
  *
  * Regras da futura integração real (documentadas em docs/arquitetura.md):
  *  - a integração com a OpenAI ocorrerá apenas no servidor;
- *  - `OPENAI_API_KEY` NUNCA poderá usar o prefixo `VITE_`;
+ *  - segredos NUNCA poderão usar o prefixo `VITE_`;
  *  - a chave nunca deverá ser enviada ao navegador;
  *  - o endpoint deverá validar entrada e retornar somente `{ resposta, fontes: string[] }`.
  */
-
-export function getChatMode(): ChatMode {
-  const raw = (import.meta.env.VITE_CHAT_MODE as string | undefined)?.trim();
-  return raw === "api" ? "api" : "mock";
-}
 
 const MOCK_DELAY_MS = 900;
 
@@ -31,9 +23,7 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function askAssistant(
-  request: ChatServiceRequest,
-): Promise<ChatServiceResponse> {
+export async function askAssistant(request: ChatServiceRequest): Promise<ChatServiceResponse> {
   const pergunta = request.pergunta.trim();
   if (!pergunta) {
     throw new Error("A pergunta não pode estar vazia.");

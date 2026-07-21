@@ -5,27 +5,33 @@ import { SourceDialog } from "@/components/chat/source-dialog";
 import { DocumentCard } from "@/components/knowledge/document-card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getChatMode } from "@/lib/chat-mode";
 import { CATEGORIAS, KNOWLEDGE_BASE } from "@/lib/knowledge-base";
 import type { CategoriaCorporativa } from "@/types/knowledge";
 
 type Filter = "Todas" | CategoriaCorporativa;
 
 export const Route = createFileRoute("/base-conhecimento")({
-  head: () => ({
-    meta: [
-      { title: "Base de conhecimento — NexaHelp AI" },
-      {
-        name: "description",
-        content:
-          "Consulte os procedimentos internos, políticas corporativas e serviços da empresa organizados por categoria.",
-      },
-      { property: "og:title", content: "Base de conhecimento — NexaHelp AI" },
-      {
-        property: "og:description",
-        content: "Documentos internos consultados pelo assistente NexaHelp AI.",
-      },
-    ],
-  }),
+  head: () => {
+    const isApi = getChatMode() === "api";
+    const description = isApi
+      ? "Consulte os procedimentos internos, políticas corporativas e serviços da empresa organizados por categoria."
+      : "Consulte documentos corporativos simulados da base de conhecimento fictícia do NexaHelp AI.";
+    return {
+      meta: [
+        { title: "Base de conhecimento — NexaHelp AI" },
+        {
+          name: "description",
+          content: description,
+        },
+        { property: "og:title", content: "Base de conhecimento — NexaHelp AI" },
+        {
+          property: "og:description",
+          content: description,
+        },
+      ],
+    };
+  },
   component: KnowledgeBasePage,
 });
 
@@ -37,6 +43,7 @@ function normalize(text: string): string {
 }
 
 function KnowledgeBasePage() {
+  const isApi = getChatMode() === "api";
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("Todas");
   const [sourceId, setSourceId] = useState<string | null>(null);
@@ -56,12 +63,11 @@ function KnowledgeBasePage() {
   return (
     <div className="mx-auto max-w-6xl space-y-8 px-4 py-10 sm:px-6">
       <header className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Base de conhecimento
-        </h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Base de conhecimento</h1>
         <p className="max-w-2xl text-muted-foreground">
-          Documentos internos consultados pelo assistente. Use a busca e os filtros
-          para encontrar procedimentos e políticas corporativas.
+          {isApi
+            ? "Documentos internos consultados pelo assistente. Use a busca e os filtros para encontrar procedimentos e políticas corporativas."
+            : "Documentos corporativos simulados usados nesta demonstração. Use a busca e os filtros para navegar pela base de conhecimento fictícia."}
         </p>
       </header>
 
@@ -102,9 +108,7 @@ function KnowledgeBasePage() {
 
       {filtered.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-10 text-center">
-          <p className="text-sm text-muted-foreground">
-            Nenhum documento corresponde à sua busca.
-          </p>
+          <p className="text-sm text-muted-foreground">Nenhum documento corresponde à sua busca.</p>
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -114,10 +118,7 @@ function KnowledgeBasePage() {
         </div>
       )}
 
-      <SourceDialog
-        documentId={sourceId}
-        onOpenChange={(open) => !open && setSourceId(null)}
-      />
+      <SourceDialog documentId={sourceId} onOpenChange={(open) => !open && setSourceId(null)} />
     </div>
   );
 }

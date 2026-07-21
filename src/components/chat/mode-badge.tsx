@@ -1,15 +1,12 @@
 import { FlaskConical, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { getChatMode } from "@/services/chat-service";
+import { getChatMode } from "@/lib/chat-mode";
 
 export function ModeBadge() {
   const mode = getChatMode();
   if (mode === "api") {
     return (
-      <Badge
-        variant="outline"
-        className="gap-1.5 border-success/40 bg-success/10 text-success"
-      >
+      <Badge variant="outline" className="gap-1.5 border-success/40 bg-success/10 text-success">
         <Sparkles className="h-3.5 w-3.5" aria-hidden />
         IA conectada
       </Badge>
@@ -28,14 +25,15 @@ export function ModeNotice() {
   if (mode === "api") {
     return (
       <p className="text-xs text-muted-foreground">
-        A IA está conectada. As respostas são geradas por modelo de linguagem e podem
-        conter imprecisões — confirme informações críticas com os setores responsáveis.
+        A IA está conectada. As respostas são geradas por modelo de linguagem e podem conter
+        imprecisões — confirme informações críticas com os setores responsáveis.
       </p>
     );
   }
   return (
     <p className="text-xs text-muted-foreground">
-      Nesta primeira versão, as respostas são simuladas para fins acadêmicos.
+      Nesta primeira versão, as respostas são demonstrativas e usam uma base de conhecimento
+      fictícia.
     </p>
   );
 }

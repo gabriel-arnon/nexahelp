@@ -13,6 +13,14 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
+import { getChatMode } from "@/lib/chat-mode";
+
+function getRootDescription(): string {
+  if (getChatMode() === "api") {
+    return "Copiloto corporativo com IA generativa que responde dúvidas sobre procedimentos e políticas internas com base em uma base de conhecimento corporativa.";
+  }
+  return "Aplicação acadêmica em modo de demonstração que simula um copiloto corporativo com respostas demonstrativas sobre uma base de conhecimento fictícia.";
+}
 
 function NotFoundComponent() {
   return (
@@ -71,49 +79,64 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo" },
-      {
-        name: "description",
-        content:
-          "Copiloto corporativo com IA generativa que responde dúvidas sobre procedimentos e políticas internas com base em uma base de conhecimento oficial.",
-      },
-      { name: "author", content: "Gabriel Arnon Figueira de Almeida" },
-      { property: "og:title", content: "NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo" },
-      {
-        property: "og:description",
-        content:
-          "Copiloto corporativo com IA generativa que responde dúvidas sobre procedimentos e políticas internas com base em uma base de conhecimento oficial.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo" },
-      { name: "twitter:description", content: "Copiloto corporativo com IA generativa que responde dúvidas sobre procedimentos e políticas internas com base em uma base de conhecimento oficial." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/efee9a0a-a75f-4795-a853-b3b4b96fe4ab/id-preview-1cc0c0df--e49372f7-85fe-4f5a-8e47-2123295c606d.lovable.app-1784176237997.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/efee9a0a-a75f-4795-a853-b3b4b96fe4ab/id-preview-1cc0c0df--e49372f7-85fe-4f5a-8e47-2123295c606d.lovable.app-1784176237997.png" },
-    ],
-    links: [
-      {
-        rel: "preconnect",
-        href: "https://fonts.googleapis.com",
-      },
-      {
-        rel: "preconnect",
-        href: "https://fonts.gstatic.com",
-        crossOrigin: "anonymous",
-      },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
-      },
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-    ],
-    htmlAttrs: { lang: "pt-BR" },
-  }),
+  head: () => {
+    const description = getRootDescription();
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { title: "NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo" },
+        {
+          name: "description",
+          content: description,
+        },
+        { name: "author", content: "Gabriel Arnon Figueira de Almeida" },
+        {
+          property: "og:title",
+          content: "NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo",
+        },
+        {
+          property: "og:description",
+          content: description,
+        },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+        {
+          name: "twitter:title",
+          content: "NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo",
+        },
+        { name: "twitter:description", content: description },
+        {
+          property: "og:image",
+          content:
+            "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/efee9a0a-a75f-4795-a853-b3b4b96fe4ab/id-preview-1cc0c0df--e49372f7-85fe-4f5a-8e47-2123295c606d.lovable.app-1784176237997.png",
+        },
+        {
+          name: "twitter:image",
+          content:
+            "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/efee9a0a-a75f-4795-a853-b3b4b96fe4ab/id-preview-1cc0c0df--e49372f7-85fe-4f5a-8e47-2123295c606d.lovable.app-1784176237997.png",
+        },
+      ],
+      links: [
+        {
+          rel: "preconnect",
+          href: "https://fonts.googleapis.com",
+        },
+        {
+          rel: "preconnect",
+          href: "https://fonts.gstatic.com",
+          crossOrigin: "anonymous",
+        },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+        },
+        { rel: "stylesheet", href: appCss },
+        { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      ],
+      htmlAttrs: { lang: "pt-BR" },
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,

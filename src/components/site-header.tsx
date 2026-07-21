@@ -37,9 +37,7 @@ export function SiteHeader() {
                   className={cn(
                     "rounded-md px-3 py-2 text-sm font-medium transition-colors",
                     "hover:bg-accent hover:text-accent-foreground",
-                    isActive(item.to)
-                      ? "text-primary bg-primary/5"
-                      : "text-muted-foreground",
+                    isActive(item.to) ? "text-primary bg-primary/5" : "text-muted-foreground",
                   )}
                 >
                   {item.label}
@@ -74,9 +72,7 @@ export function SiteHeader() {
                         className={cn(
                           "block rounded-md px-3 py-2 text-sm font-medium transition-colors",
                           "hover:bg-accent hover:text-accent-foreground",
-                          isActive(item.to)
-                            ? "text-primary bg-primary/5"
-                            : "text-foreground",
+                          isActive(item.to) ? "text-primary bg-primary/5" : "text-foreground",
                         )}
                       >
                         {item.label}

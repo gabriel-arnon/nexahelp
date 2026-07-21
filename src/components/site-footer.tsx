@@ -9,9 +9,7 @@ export function SiteFooter() {
           <div className="space-y-1 text-sm text-muted-foreground md:text-right">
             <p>
               Projeto acadêmico desenvolvido por{" "}
-              <span className="font-medium text-foreground">
-                Gabriel Arnon Figueira de Almeida
-              </span>{" "}
+              <span className="font-medium text-foreground">Gabriel Arnon Figueira de Almeida</span>{" "}
               — RA 189800
             </p>
             <p>

@@ -21,7 +21,14 @@ const RULES: AnswerRule[] = [
     fontes: ["rh-001"],
   },
   {
-    keywords: ["e-mail suspeito", "email suspeito", "phishing", "golpe", "fraude", "e-mail estranho"],
+    keywords: [
+      "e-mail suspeito",
+      "email suspeito",
+      "phishing",
+      "golpe",
+      "fraude",
+      "e-mail estranho",
+    ],
     resposta:
       "Ao receber um e-mail suspeito, não clique em links nem abra anexos e não responda ao remetente. Utilize o botão 'Reportar phishing' do seu cliente de e-mail corporativo. Se você já tiver clicado em algum link ou fornecido dados, comunique imediatamente a equipe de Segurança da Informação pelo canal de incidentes para conter possíveis impactos.",
     fontes: ["si-001", "si-004"],
@@ -157,9 +164,7 @@ export function resolveMockAnswer(pergunta: string): ChatServiceResponse {
   }
 
   // Fallback: try keyword match in the knowledge base itself
-  const doc = KNOWLEDGE_BASE.find((d) =>
-    d.palavrasChave.some((kw) => q.includes(normalize(kw))),
-  );
+  const doc = KNOWLEDGE_BASE.find((d) => d.palavrasChave.some((kw) => q.includes(normalize(kw))));
   if (doc) {
     return {
       resposta:

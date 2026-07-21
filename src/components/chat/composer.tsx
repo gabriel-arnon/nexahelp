@@ -52,9 +52,7 @@ export const Composer = forwardRef<HTMLTextAreaElement, ComposerProps>(function 
         <div className="flex items-center justify-between gap-2 px-2 pb-1">
           <p
             className={
-              tooLong
-                ? "text-xs font-medium text-destructive"
-                : "text-xs text-muted-foreground"
+              tooLong ? "text-xs font-medium text-destructive" : "text-xs text-muted-foreground"
             }
           >
             {value.length}/{MAX}
