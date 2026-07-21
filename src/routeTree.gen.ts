@@ -13,6 +13,7 @@ import { Route as GovernancaRouteImport } from './routes/governanca'
 import { Route as BaseConhecimentoRouteImport } from './routes/base-conhecimento'
 import { Route as AssistenteRouteImport } from './routes/assistente'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 
 const GovernancaRoute = GovernancaRouteImport.update({
   id: '/governanca',
@@ -34,18 +35,25 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assistente': typeof AssistenteRoute
   '/base-conhecimento': typeof BaseConhecimentoRoute
   '/governanca': typeof GovernancaRoute
+  '/api/chat': typeof ApiChatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assistente': typeof AssistenteRoute
   '/base-conhecimento': typeof BaseConhecimentoRoute
   '/governanca': typeof GovernancaRoute
+  '/api/chat': typeof ApiChatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,21 @@ export interface FileRoutesById {
   '/assistente': typeof AssistenteRoute
   '/base-conhecimento': typeof BaseConhecimentoRoute
   '/governanca': typeof GovernancaRoute
+  '/api/chat': typeof ApiChatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/assistente' | '/base-conhecimento' | '/governanca'
+  fullPaths:
+    '/' | '/assistente' | '/base-conhecimento' | '/governanca' | '/api/chat'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/assistente' | '/base-conhecimento' | '/governanca'
-  id: '__root__' | '/' | '/assistente' | '/base-conhecimento' | '/governanca'
+  to: '/' | '/assistente' | '/base-conhecimento' | '/governanca' | '/api/chat'
+  id:
+    | '__root__'
+    | '/'
+    | '/assistente'
+    | '/base-conhecimento'
+    | '/governanca'
+    | '/api/chat'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +83,7 @@ export interface RootRouteChildren {
   AssistenteRoute: typeof AssistenteRoute
   BaseConhecimentoRoute: typeof BaseConhecimentoRoute
   GovernancaRoute: typeof GovernancaRoute
+  ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +116,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +131,7 @@ const rootRouteChildren: RootRouteChildren = {
   AssistenteRoute: AssistenteRoute,
   BaseConhecimentoRoute: BaseConhecimentoRoute,
   GovernancaRoute: GovernancaRoute,
+  ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

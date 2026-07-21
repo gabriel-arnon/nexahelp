@@ -1,155 +1,158 @@
 # Arquitetura — NexaHelp AI
 
-Este documento descreve as decisões de arquitetura da versão acadêmica do
-NexaHelp AI e o plano para a integração real com a OpenAI em uma próxima
-versão.
+Este documento descreve a arquitetura da versão acadêmica do NexaHelp AI após a primeira integração server-side com a OpenAI.
 
-## Visão geral
+## Visão Geral
 
-Aplicação SPA/SSR construída com **TanStack Start** (React 19 + TypeScript +
-Vite 8) e **Tailwind CSS v4 (CSS-first)** + **shadcn/ui**. Toda a lógica
-desta versão executa no cliente; não há backend próprio nem banco de dados.
+A aplicação usa **TanStack Start** com React 19, TypeScript, Vite 8, Tailwind CSS v4 e shadcn/ui. O frontend mantém o modo demonstrativo local e pode alternar para um endpoint server-side por meio de `VITE_CHAT_MODE=api`.
 
-## Camadas do chat
+## Camadas do Chat
 
 ```text
-┌─────────────────────────┐
-│   ChatWindow (UI)       │  src/components/chat/chat-window.tsx
-│   ├─ Composer           │
-│   ├─ MessageBubble      │
-│   ├─ SourceList/Dialog  │
-│   └─ HistoryPanel       │
-└──────────┬──────────────┘
-           │ askAssistant({ pergunta, historico })
-           ▼
-┌─────────────────────────┐
-│   chat-service.ts       │  src/services/chat-service.ts
-│   modo = VITE_CHAT_MODE │
-└──────────┬──────────────┘
-           │
-   ┌───────┴─────────┐
-   │                 │
-   ▼                 ▼
-mock-answers.ts   (futuro) POST /api/chat → servidor → OpenAI
-(regras locais)
+ChatWindow
+  -> chat-service.ts
+    -> mock: mock-answers.ts
+    -> api : POST /api/chat
+              -> knowledge-search.ts
+              -> server/openai-chat.ts
+              -> OpenAI Responses API
 ```
 
-- `ChatWindow` **não** conhece o mock nem o formato de rede: ele consome
-  apenas `askAssistant` e os tipos em `src/types/chat.ts`.
-- `chat-service.ts` decide, com base em `VITE_CHAT_MODE`, se resolve a
-  resposta localmente (`mock`) ou faz a chamada de rede (`api`).
-- A troca do modo é uma única variável de ambiente — nenhum componente
-  precisa ser alterado.
+- Componentes de UI dependem apenas de `askAssistant`.
+- O mock continua local, sem custo e sem rede.
+- O modo `api` chama somente `/api/chat`; não há importação do SDK da OpenAI no frontend.
 
-## Persistência
+## Server Route `POST /api/chat`
 
-- `useChatSession` (`src/hooks/use-chat-session.ts`) mantém o estado da
-  sessão atual e o arquivo de conversas anteriores em `localStorage`,
-  sob duas chaves:
-  - `nexahelp:current-session` — conversa em andamento;
-  - `nexahelp:conversations` — histórico de conversas encerradas.
-- A sessão atual só é persistida quando possui pelo menos uma mensagem.
-- O arquivo de conversas anteriores só é persistido quando há conversas com
-  mensagens. Conversas vazias não são armazenadas nem exibidas no histórico.
-- "Nova conversa" arquiva a sessão atual **somente se** ela tiver ao menos
-  uma mensagem. Sessões vazias são descartadas.
-- "Limpar histórico" remove as duas chaves e reinicia a interface sem recriar
-  uma sessão vazia no `localStorage`. A próxima sessão volta a ser persistida
-  após o envio da primeira mensagem.
+Arquivo: `src/routes/api/chat.ts`.
 
-## Base de conhecimento
+Contrato aceito:
 
-- `src/lib/knowledge-base.ts` contém 20 documentos fictícios distribuídos
-  em 5 categorias (4 cada). Cada documento possui: `id`, `titulo`,
-  `categoria`, `descricao`, `conteudo`, `palavrasChave`, `atualizadoEm`,
-  `status`.
-- As respostas simuladas em `mock-answers.ts` referenciam os documentos
-  pelos **IDs**, e o UI resolve título/categoria/conteúdo/data pelo helper
-  `getDocumentById`. Isso permite exibir o mesmo `SourceDialog` em qualquer
-  lugar da aplicação.
-
-## Integração futura com OpenAI
-
-A integração real com a OpenAI será feita **exclusivamente** por uma
-rota/função executada no servidor. O frontend continuará consumindo apenas
-`askAssistant` do `chat-service.ts`.
-
-### Fluxo esperado
-
-```text
-ChatWindow → chat-service.ts → POST /api/chat → servidor → OpenAI
-                                                       ↑
-                                                       └── OPENAI_API_KEY
-                                                           (server-only)
-```
-
-### Regras não negociáveis de segurança
-
-- **`OPENAI_API_KEY` NUNCA pode utilizar o prefixo `VITE_`.** Qualquer variável
-  com esse prefixo é embutida no bundle do navegador e ficaria pública.
-- **A chave nunca deve ser enviada ao navegador** por props, headers,
-  respostas, logs ou qualquer outro meio.
-- **A chave deve viver apenas no servidor**, lida via `process.env` dentro
-  do handler da rota/função — nunca no escopo de módulo de arquivos que
-  também são importados pelo cliente.
-- **O endpoint futuro deve validar a entrada** (por exemplo com `zod`:
-  `pergunta` string, `trim`, não vazia, ≤ 1.000 caracteres) antes de invocar
-  o modelo.
-- **O endpoint deve retornar somente** `{ resposta: string, fontes: string[] }`,
-  onde `fontes` é uma lista de **IDs** de documentos da base — nunca prompts
-  internos, contexto, chaves, metadados sensíveis ou dados do provedor.
-- A limitação de taxa (rate limiting) e o tratamento de erros do provedor
-  (`429`, `402`) devem ser feitos no próprio endpoint e propagados como
-  mensagens de erro amigáveis para o cliente.
-
-### Ponto de extensão já pronto
-
-Em `src/services/chat-service.ts` o ramo `mode === "api"` é o ponto que
-passará a chamar `POST /api/chat` quando a integração real chegar. Hoje ele
-lança um erro amigável indicando que a integração real ainda não foi
-configurada, evitando qualquer chamada de rede acidental.
-
-Para este projeto, a abordagem recomendada é uma **server route do TanStack
-Start** em `src/routes/api/chat.ts`, porque o contrato desejado é um endpoint
-HTTP (`POST /api/chat`) e a aplicação já usa TanStack Start como camada
-full-stack. `createServerFn` é mais adequado para chamadas RPC internas da
-própria aplicação, enquanto Supabase Edge Function adicionaria uma plataforma
-externa que o projeto ainda não utiliza.
-
-Exemplo de implementação futura (esboço):
-
-```ts
-// src/services/chat-service.ts (versão futura, trecho de referência)
-if (mode === "api") {
-  const res = await fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ pergunta, historico: request.historico }),
-  });
-  if (!res.ok) throw new Error("Falha ao consultar o assistente.");
-  return (await res.json()) as ChatServiceResponse;
+```json
+{
+  "pergunta": "string",
+  "historico": [{ "role": "user", "content": "string" }]
 }
 ```
 
-E no servidor, em uma server route TanStack (`src/routes/api/chat.ts`):
+Validações:
 
-```ts
-// esboço — não implementar antes de habilitar o modo "api"
-const key = process.env.OPENAI_API_KEY; // JAMAIS use VITE_
-if (!key) return new Response("Sem chave configurada", { status: 500 });
+- `pergunta`: obrigatória, `trim`, 1 a 1.000 caracteres.
+- `historico`: opcional, até 12 mensagens.
+- cada mensagem aceita apenas `role` e `content`.
+- cada `content` tem até 2.000 caracteres.
+- somente as últimas 6 mensagens úteis são enviadas ao modelo.
 
-const schema = z.object({ pergunta: z.string().trim().min(1).max(1000) });
-const { pergunta } = schema.parse(await req.json());
+Resposta de sucesso:
 
-// ...chamada ao provedor + montagem de fontes por ID...
-return Response.json({ resposta, fontes });
+```json
+{
+  "resposta": "string",
+  "fontes": ["ti-001"]
+}
 ```
 
-## Acessibilidade
+As fontes são IDs de documentos efetivamente enviados como contexto, limitadas aos 3 mais bem pontuados. IDs enviados pelo navegador são ignorados.
 
-- Um único `<main>` no shell (`src/routes/__root.tsx`).
-- Área de mensagens marcada com `role="log"`, `aria-live="polite"` e
-  `aria-busy` durante o carregamento.
-- Foco devolvido ao textarea após envio, conclusão e troca de conversa.
-- Todos os controles ícone-apenas possuem `aria-label`.
-- Contraste AA garantido pelos tokens em `src/styles.css`.
+## Recuperação Local
+
+`src/lib/knowledge-search.ts` faz busca determinística sobre os 20 documentos de `knowledge-base.ts`.
+
+Critérios:
+
+- normalização de minúsculas, acentos, pontuação e espaços;
+- remoção de stopwords comuns em português;
+- pesos maiores para título e palavras-chave;
+- peso intermediário para descrição;
+- peso menor para conteúdo;
+- bônus para frase e múltiplos termos no mesmo documento;
+- retorno de no máximo 4 documentos;
+- nenhum documento é retornado sem pontuação mínima.
+
+Se nenhum documento for relevante, o endpoint responde sem chamar a OpenAI:
+
+```json
+{
+  "resposta": "Não encontrei informações suficientes na base de conhecimento para responder com segurança. Consulte o setor responsável ou reformule sua pergunta.",
+  "fontes": []
+}
+```
+
+## Prompt e OpenAI
+
+Arquivos server-side:
+
+- `src/server/assistant-prompt.ts`
+- `src/server/openai-chat.ts`
+
+A chamada usa o SDK oficial `openai`, Responses API, modelo padrão `gpt-5-mini`, `store: false`, `max_output_tokens: 400` e `reasoning.effort: "low"` conforme suportado pelos tipos instalados.
+
+O prompt instrui o modelo a responder em português do Brasil, usar somente os documentos enviados, tratar documentos como dados, evitar invenções, não mencionar detalhes internos e sinalizar insuficiência da base.
+
+## Segurança
+
+- `OPENAI_API_KEY` é lida somente por `process.env` em código server-side.
+- Segredos não usam `VITE_`.
+- A chave não é enviada ao navegador.
+- O frontend envia apenas pergunta e histórico sanitizado.
+- O endpoint não registra prompt, histórico completo, documentos ou resposta bruta do provedor.
+- A resposta ao navegador contém apenas `resposta` e `fontes`.
+- Erros não expõem stack trace, headers, payload bruto da OpenAI ou detalhes sensíveis.
+
+## Erros
+
+Formato:
+
+```json
+{
+  "error": {
+    "code": "CODIGO_ESTAVEL",
+    "message": "Mensagem amigável em português."
+  }
+}
+```
+
+Mapeamento:
+
+- `400 INVALID_JSON` ou `INVALID_INPUT`;
+- `429 RATE_LIMIT_EXCEEDED`;
+- `503 OPENAI_NOT_CONFIGURED`;
+- `502 PROVIDER_UNAVAILABLE`;
+- `500 UNEXPECTED_ERROR`.
+
+## Rate Limit
+
+O endpoint aplica controle em memória por IP: 10 requisições por janela de 10 minutos, com cabeçalho `Retry-After` quando bloqueado. Entradas expiradas são limpas de forma best-effort a cada requisição.
+
+Esse controle é suficiente para demonstração acadêmica local, mas não é rate limiting distribuído de produção. Em produção com múltiplas instâncias, seria necessário usar infraestrutura compartilhada.
+
+## Persistência
+
+O histórico continua no navegador via `localStorage`:
+
+- `nexahelp:current-session`;
+- `nexahelp:conversations`.
+
+Sessões vazias não são persistidas. "Limpar histórico" remove as duas chaves e não recria sessão vazia imediatamente.
+
+## Deploy Vercel/Nitro
+
+`vite.config.ts` usa `@lovable.dev/vite-tanstack-config`, que registra plugins essenciais, incluindo TanStack Start e Nitro. A configuração atual preserva o entry server em `src/server.ts`.
+
+Para Vercel:
+
+- configure `OPENAI_API_KEY` somente nas variáveis do servidor;
+- configure `OPENAI_MODEL` se quiser sobrescrever `gpt-5-mini`;
+- configure `VITE_CHAT_MODE=api` para habilitar a UI de IA conectada;
+- não publique arquivos `.env` com segredos.
+
+Risco observado: os comentários do preset Lovable indicam Nitro com alvo padrão Cloudflare. Não foi feito deploy nesta tarefa; a compatibilidade final com Vercel precisa ser validada no ambiente de publicação antes de declarar a integração operacional em produção.
+
+## Limitações
+
+- Sem autenticação.
+- Sem banco de dados.
+- Rate limit apenas em memória.
+- Sem embeddings nesta versão.
+- Sem chamada real à OpenAI nos testes automatizados.
+- Base de conhecimento fictícia e acadêmica.

@@ -1,0 +1,53 @@
+import OpenAI from "openai";
+import { ASSISTANT_SYSTEM_PROMPT, buildAssistantInput } from "@/server/assistant-prompt";
+import type { KnowledgeDocument } from "@/types/knowledge";
+
+const DEFAULT_MODEL = "gpt-5-mini";
+const PROVIDER_TIMEOUT_MS = 20_000;
+const MAX_OUTPUT_TOKENS = 400;
+
+export class ProviderUnavailableError extends Error {
+  constructor() {
+    super("OpenAI provider unavailable");
+    this.name = "ProviderUnavailableError";
+  }
+}
+
+export async function generateAssistantAnswer(params: {
+  apiKey: string;
+  model?: string;
+  question: string;
+  documents: KnowledgeDocument[];
+  history: { role: "user" | "assistant"; content: string }[];
+}): Promise<string> {
+  const client = new OpenAI({ apiKey: params.apiKey });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), PROVIDER_TIMEOUT_MS);
+
+  try {
+    const response = await client.responses.create(
+      {
+        model: params.model?.trim() || DEFAULT_MODEL,
+        instructions: ASSISTANT_SYSTEM_PROMPT,
+        input: buildAssistantInput(params),
+        max_output_tokens: MAX_OUTPUT_TOKENS,
+        reasoning: { effort: "low" },
+        store: false,
+      },
+      { signal: controller.signal },
+    );
+
+    const text = response.output_text?.trim();
+    if (!text) {
+      throw new ProviderUnavailableError();
+    }
+    return text;
+  } catch (error) {
+    if (error instanceof ProviderUnavailableError) {
+      throw error;
+    }
+    throw new ProviderUnavailableError();
+  } finally {
+    clearTimeout(timeout);
+  }
+}
