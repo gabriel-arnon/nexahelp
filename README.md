@@ -1,12 +1,12 @@
 # NexaHelp AI — Copiloto Inteligente para Conhecimento Corporativo
 
-Aplicação web acadêmica que simula um copiloto corporativo para conhecimento interno. Colaboradores podem fazer perguntas em linguagem natural sobre procedimentos internos, políticas, TI, RH, Segurança da Informação, Facilities e serviços administrativos, recebendo respostas demonstrativas com fontes simuladas.
+Aplicação web acadêmica que demonstra um copiloto corporativo para conhecimento interno. Colaboradores podem fazer perguntas em linguagem natural sobre procedimentos internos, políticas, TI, RH, Segurança da Informação, Facilities e serviços administrativos.
+
+Esta versão mantém o **modo mock** com respostas demonstrativas e adiciona a primeira integração server-side com a OpenAI para uso quando `VITE_CHAT_MODE=api` e as variáveis do servidor estiverem configuradas. A integração ainda não foi publicada nem validada em produção.
 
 ## Objetivo
 
-Demonstrar, no contexto da disciplina **IA Generativa Aplicada ao Desenvolvimento** (curso de Inteligência Artificial e Automação Digital), como a IA generativa pode facilitar o acesso ao conhecimento interno de uma organização.
-
-Esta primeira versão utiliza **respostas simuladas** (mock) sobre uma base fictícia. A arquitetura foi desenhada para permitir, em uma versão futura, a substituição do mock por uma integração real com a OpenAI executada exclusivamente no servidor.
+Demonstrar, no contexto da disciplina **IA Generativa Aplicada ao Desenvolvimento** (curso de Inteligência Artificial e Automação Digital), como IA generativa pode facilitar o acesso ao conhecimento interno de uma organização com transparência, controle de custo e isolamento de segredos.
 
 ## Funcionalidades
 
@@ -14,106 +14,139 @@ Esta primeira versão utiliza **respostas simuladas** (mock) sobre uma base fict
 - Interface de chat com o "Assistente Corporativo":
   - perguntas sugeridas clicáveis;
   - histórico persistido em `localStorage`;
-  - painel lateral com conversas anteriores (abrir e excluir);
+  - painel lateral com conversas anteriores;
   - botões "Nova conversa" e "Limpar histórico";
-  - validação de entrada (não vazia, limite de 1.000 caracteres, sem envios duplicados);
-  - estado de carregamento, tratamento de erro com "Tentar novamente";
-  - autoscroll, retorno de foco ao campo, `aria-live` na área de respostas;
-  - badge dinâmico "Modo de demonstração" / "IA conectada" conforme `VITE_CHAT_MODE`;
-  - fontes clicáveis que abrem um diálogo com o documento completo.
+  - validação de entrada e prevenção de envios duplicados;
+  - tratamento de erro com mensagens amigáveis;
+  - fontes clicáveis que abrem o documento completo;
+  - badge dinâmico "Modo de demonstração" / "IA conectada".
 - Base de conhecimento fictícia com **20 documentos** simulados organizados em 5 categorias, com busca e filtro.
 - Página de governança com princípios de uso responsável de IA.
-- Layout responsivo, acessível e em português do Brasil.
+- Endpoint server-side `POST /api/chat` para o modo `api`.
 
-## Tecnologias utilizadas
+## Tecnologias Utilizadas
 
-- [TanStack Start](https://tanstack.com/start) v1 (framework React full-stack)
+- [TanStack Start](https://tanstack.com/start) v1
+- TanStack Router e TanStack Query
 - React 19 + TypeScript
 - Vite 8
-- Tailwind CSS v4 (CSS-first, `@theme`)
-- shadcn/ui (Radix UI + Tailwind)
-- lucide-react (ícones)
-- TanStack Router e TanStack Query
+- Tailwind CSS v4
+- shadcn/ui
+- lucide-react
+- Zod
+- OpenAI SDK oficial (`openai`)
+- Vitest
 
-## Ferramentas de IA utilizadas no desenvolvimento
+## Modos de Chat
+
+- `VITE_CHAT_MODE=mock`: modo padrão. Usa `src/lib/mock-answers.ts` e não chama APIs externas.
+- `VITE_CHAT_MODE=api`: o frontend envia somente `pergunta` e histórico sanitizado para `POST /api/chat`. A rota valida a entrada, busca documentos relevantes localmente e só chama a OpenAI se houver contexto suficiente.
+
+Não existe fallback silencioso de `api` para `mock`: se a API real falhar, o usuário recebe uma mensagem de indisponibilidade.
+
+## Variáveis de Ambiente
+
+Copie `.env.example` para um arquivo local ignorado pelo Git, como `.env.local`, e configure no ambiente do servidor:
+
+```env
+VITE_CHAT_MODE=mock
+OPENAI_API_KEY=<configurar-no-servidor>
+OPENAI_MODEL=gpt-5-mini
+```
+
+- `VITE_CHAT_MODE` é público e controla a interface.
+- `OPENAI_API_KEY` é exclusivamente server-side e nunca deve usar prefixo `VITE_`.
+- `OPENAI_MODEL` permite alterar o modelo no servidor; o padrão é `gpt-5-mini`.
+- Nenhuma chave real deve ser armazenada em arquivo versionado.
+
+## Como Executar
+
+Pré-requisitos: Bun ou Node 20+ com npm compatível.
+
+```bash
+npm install --package-lock=false
+npm run dev
+npm run lint
+npm run typecheck
+npm run test:run
+npm run build
+```
+
+Não há porta explícita definida nos scripts. O servidor de desenvolvimento usa a configuração do Vite/Lovable e o terminal exibe a URL local em uso.
+
+## Fluxo `POST /api/chat`
+
+1. O frontend chama `askAssistant`.
+2. Em `mock`, a resposta vem de regras locais.
+3. Em `api`, o serviço faz `POST /api/chat`.
+4. A rota valida o corpo com Zod.
+5. A busca local seleciona até 4 documentos relevantes, priorizando a pergunta atual.
+6. Se nenhum documento atingir a pontuação mínima, a rota responde sem chamar a OpenAI.
+7. Perguntas independentes não enviam histórico ao modelo; continuações contextuais usam apenas a última pergunta relevante do usuário.
+8. Se houver contexto e `OPENAI_API_KEY`, a rota chama a Responses API com `store: false`.
+9. O retorno ao navegador contém apenas:
+
+```json
+{
+  "resposta": "string",
+  "fontes": ["id-documento"]
+}
+```
+
+## Busca Local
+
+`src/lib/knowledge-search.ts` faz recuperação determinística sem embeddings e sem chamadas externas. A busca normaliza caixa, acentos, pontuação e espaços; remove stopwords comuns em português; pontua título, palavras-chave, descrição e conteúdo com pesos diferentes; aplica bônus de frase e de múltiplos termos; e retorna no máximo 4 documentos com relevância mínima.
+
+Embeddings podem ser adicionados futuramente, mas estão fora desta versão.
+
+## Segurança e Privacidade
+
+- O SDK da OpenAI é importado apenas por código em `src/server`.
+- A chave é lida via `process.env.OPENAI_API_KEY` no servidor.
+- A Responses API usa `store: false`.
+- Não é usado `previous_response_id`.
+- O endpoint não envia IDs de sessão, timestamps, mensagens com erro, metadados desnecessários ou todos os documentos da base.
+- Erros não retornam stack trace, headers, mensagens brutas da OpenAI ou detalhes sensíveis.
+- O rate limit em memória permite 10 requisições por IP a cada 10 minutos. Ele é adequado para demonstração acadêmica, mas não é distribuído nem suficiente para produção com múltiplas instâncias.
+
+## Publicação na Vercel
+
+O projeto usa a configuração `@lovable.dev/vite-tanstack-config`, que já registra TanStack Start, React, Tailwind, aliases e Nitro. A configuração atual mantém o entry server em `src/server.ts`. Para publicar na Vercel, configure `OPENAI_API_KEY`, `OPENAI_MODEL` e `VITE_CHAT_MODE=api` nas variáveis do projeto da Vercel. Não faça commit de `.env` com chaves reais.
+
+Risco atual: o preset Lovable informa alvo Nitro padrão Cloudflare nos comentários de `vite.config.ts`; a compatibilidade final com Vercel deve ser validada no ambiente da Vercel antes de declarar produção operacional.
+
+## Estrutura do Projeto
+
+```text
+src/
+  components/chat/             # UI do chat
+  hooks/use-chat-session.ts    # persistência local
+  lib/
+    knowledge-base.ts          # 20 documentos fictícios
+    knowledge-search.ts        # recuperação local determinística
+    mock-answers.ts            # respostas demonstrativas
+  routes/
+    api/chat.ts                # server route POST /api/chat
+  server/
+    assistant-prompt.ts        # prompt e formatação server-side
+    openai-chat.ts             # chamada Responses API
+  services/chat-service.ts     # mock | api
+  types/
+docs/
+  arquitetura.md
+```
+
+## Ferramentas de IA Utilizadas no Desenvolvimento
 
 - **Lovable** — geração inicial da interface e arquitetura.
 - **ChatGPT** — planejamento, engenharia de prompts e revisão do escopo.
-- **Codex** — auditoria, revisão de código, correções e validação técnica.
+- **Codex** — auditoria, revisão de código, correções, integração server-side e validação técnica.
 
-## Como executar
-
-Pré-requisitos: [Bun](https://bun.sh) (ou Node 20+ com npm/pnpm equivalente).
-
-```bash
-# Instalar dependências
-bun install
-
-# Ambiente de desenvolvimento
-bun run dev
-
-# Build de produção
-bun run build
-
-# Lint
-bun run lint
-```
-
-Não há porta explícita definida nos scripts do projeto. O servidor de desenvolvimento usa a configuração do Vite/Lovable e o terminal exibirá a URL local em uso ao executar `bun run dev`.
-
-## Variáveis de ambiente
-
-Copie `.env.example` para `.env` (ou `.env.local`) e ajuste conforme necessário:
-
-- `VITE_CHAT_MODE=mock` — modo padrão desta versão; respostas simuladas.
-- `VITE_CHAT_MODE=api` — reserva o modo para futura integração real com IA no servidor.
-
-> **Importante:** nenhuma chave de API é lida ou exposta no navegador nesta versão.
-> Quando a integração real for implementada, a chave `OPENAI_API_KEY` **jamais**
-> poderá usar o prefixo `VITE_`.
-
-## Estrutura do projeto
-
-```
-src/
-  components/
-    chat/                     # ChatWindow, Composer, MessageBubble, SourceList, ...
-    knowledge/                # DocumentCard
-    ui/                       # shadcn/ui
-    site-header.tsx
-    site-footer.tsx
-    logo.tsx
-  hooks/
-    use-chat-session.ts       # persistência da conversa em localStorage
-  lib/
-    knowledge-base.ts         # 20 documentos fictícios/simulados
-    mock-answers.ts           # regras de respostas simuladas (retorna IDs)
-  services/
-    chat-service.ts           # camada única consumida pelo chat (mock | api)
-  types/
-    chat.ts
-    knowledge.ts
-  routes/
-    __root.tsx                # header, footer, metadata
-    index.tsx                 # Página inicial
-    assistente.tsx            # Chat
-    base-conhecimento.tsx     # Lista/filtro/busca
-    governanca.tsx            # Uso responsável de IA
-docs/
-  arquitetura.md              # Decisões de arquitetura e plano futuro OpenAI
-  evidencias/README.md        # Espaço para prints/vídeos de teste
-```
-
-## Limitações da versão simulada
-
-- Sem backend: todas as respostas vêm de regras locais em `src/lib/mock-answers.ts`.
-- Sem autenticação e sem integração real com IA.
-- Sem persistência em banco de dados: o histórico de conversas fica apenas no navegador (`localStorage`) e é único por dispositivo/perfil.
-- A base de conhecimento é fictícia, com documentos corporativos simulados, e serve apenas para demonstração acadêmica.
-
-## Identificação acadêmica
+## Identificação Acadêmica
 
 - **Autor:** Gabriel Arnon Figueira de Almeida
 - **RA:** 189800
 - **Curso:** Inteligência Artificial e Automação Digital
 - **Disciplina:** IA Generativa Aplicada ao Desenvolvimento
+- **Professora:** Patrícia Ampese
+- **Semestre:** 2º semestre
