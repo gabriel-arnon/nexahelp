@@ -1,6 +1,6 @@
 # Arquitetura — NexaHelp AI
 
-Este documento descreve a arquitetura da versão acadêmica do NexaHelp AI após a primeira integração server-side com a OpenAI.
+Este documento descreve a arquitetura da versão acadêmica do NexaHelp AI com integração server-side atual com a OpenAI, publicada e validada em produção na Vercel.
 
 ## Visão Geral
 
@@ -21,6 +21,8 @@ ChatWindow
 - Componentes de UI dependem apenas de `askAssistant`.
 - O mock continua local, sem custo e sem rede.
 - O modo `api` chama somente `/api/chat`; não há importação do SDK da OpenAI no frontend.
+- Perguntas fora da base e intenções locais, como saudações e "qual seu nome?", não geram chamada ao modelo.
+- O contexto da conversa é usado somente em perguntas reconhecidas como continuação contextual.
 
 ## Server Route `POST /api/chat`
 
@@ -86,7 +88,7 @@ Arquivos server-side:
 - `src/server/assistant-prompt.ts`
 - `src/server/openai-chat.ts`
 
-A chamada usa o SDK oficial `openai`, Responses API, modelo padrão `gpt-5-mini`, `store: false`, `max_output_tokens: 700` e `reasoning.effort: "low"` conforme suportado pelos tipos instalados.
+A chamada usa o SDK oficial `openai`, Responses API, modelo padrão `gpt-5-mini`, `store: false`, `max_output_tokens: 700` e `reasoning.effort: "low"` conforme suportado pelos tipos instalados. A Responses API foi validada localmente e em produção na Vercel.
 
 O prompt instrui o modelo a responder em português do Brasil, usar somente os documentos enviados, tratar documentos como dados, evitar invenções, não mencionar detalhes internos e sinalizar insuficiência da base.
 
@@ -118,7 +120,7 @@ Mapeamento:
 - `400 INVALID_JSON` ou `INVALID_INPUT`;
 - `429 RATE_LIMIT_EXCEEDED`;
 - `503 OPENAI_NOT_CONFIGURED`;
-- `502 PROVIDER_UNAVAILABLE`;
+- `502 PROVIDER_UNAVAILABLE` ou `PROVIDER_INCOMPLETE`;
 - `500 UNEXPECTED_ERROR`.
 
 ## Rate Limit
@@ -138,6 +140,8 @@ Sessões vazias não são persistidas. "Limpar histórico" remove as duas chaves
 
 ## Deploy Vercel/Nitro
 
+O deploy full-stack na Vercel foi concluído e a aplicação pública está disponível em https://nexahelp.vercel.app/. A server route `POST /api/chat` funcionou em produção, incluindo leitura das variáveis server-side e chamada à OpenAI Responses API.
+
 `vite.config.ts` usa `@lovable.dev/vite-tanstack-config`, que registra plugins essenciais, incluindo TanStack Start e Nitro. A configuração atual preserva o entry server em `src/server.ts`.
 
 Para Vercel:
@@ -147,13 +151,11 @@ Para Vercel:
 - configure `VITE_CHAT_MODE=api` para habilitar a UI de IA conectada;
 - não publique arquivos `.env` com segredos.
 
-Risco observado: os comentários do preset Lovable indicam Nitro com alvo padrão Cloudflare. Não foi feito deploy nesta tarefa; a compatibilidade final com Vercel precisa ser validada no ambiente de publicação antes de declarar a integração operacional em produção.
-
 ## Limitações
 
 - Sem autenticação.
 - Sem banco de dados.
 - Rate limit apenas em memória.
 - Sem embeddings nesta versão.
-- Sem chamada real à OpenAI nos testes automatizados.
+- Testes automatizados não fazem chamada real à OpenAI.
 - Base de conhecimento fictícia e acadêmica.

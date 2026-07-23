@@ -2,7 +2,12 @@
 
 Aplicação web acadêmica que demonstra um copiloto corporativo para conhecimento interno. Colaboradores podem fazer perguntas em linguagem natural sobre procedimentos internos, políticas, TI, RH, Segurança da Informação, Facilities e serviços administrativos.
 
-Esta versão mantém o **modo mock** com respostas demonstrativas e adiciona a primeira integração server-side com a OpenAI para uso quando `VITE_CHAT_MODE=api` e as variáveis do servidor estiverem configuradas. A integração ainda não foi publicada nem validada em produção.
+Esta versão mantém o **modo mock** com respostas demonstrativas e inclui integração server-side com a OpenAI para uso quando `VITE_CHAT_MODE=api` e as variáveis do servidor estiverem configuradas. A integração server-side com a OpenAI está publicada e foi validada em produção na Vercel.
+
+## Links do projeto
+
+- Aplicação publicada: https://nexahelp.vercel.app/
+- Repositório: https://github.com/gabriel-arnon/nexahelp
 
 ## Objetivo
 
@@ -23,6 +28,10 @@ Demonstrar, no contexto da disciplina **IA Generativa Aplicada ao Desenvolviment
 - Base de conhecimento fictícia com **20 documentos** simulados organizados em 5 categorias, com busca e filtro.
 - Página de governança com princípios de uso responsável de IA.
 - Endpoint server-side `POST /api/chat` para o modo `api`.
+
+## Demonstração
+
+A aplicação permite perguntar em linguagem natural, consultar uma base fictícia de 20 documentos corporativos simulados, receber respostas geradas por IA, conferir fontes clicáveis, manter histórico local no navegador e visualizar orientações de governança para uso responsável.
 
 ## Tecnologias Utilizadas
 
@@ -111,9 +120,23 @@ Embeddings podem ser adicionados futuramente, mas estão fora desta versão.
 
 ## Publicação na Vercel
 
-O projeto usa a configuração `@lovable.dev/vite-tanstack-config`, que já registra TanStack Start, React, Tailwind, aliases e Nitro. A configuração atual mantém o entry server em `src/server.ts`. Para publicar na Vercel, configure `OPENAI_API_KEY`, `OPENAI_MODEL` e `VITE_CHAT_MODE=api` nas variáveis do projeto da Vercel. Não faça commit de `.env` com chaves reais.
+O deployment full-stack na Vercel foi concluído em https://nexahelp.vercel.app/. O endpoint `POST /api/chat` foi validado na Vercel, e as variáveis server-side `OPENAI_API_KEY` e `OPENAI_MODEL` funcionaram corretamente no ambiente de produção.
 
-Risco atual: o preset Lovable informa alvo Nitro padrão Cloudflare nos comentários de `vite.config.ts`; a compatibilidade final com Vercel deve ser validada no ambiente da Vercel antes de declarar produção operacional.
+O projeto usa a configuração `@lovable.dev/vite-tanstack-config`, que já registra TanStack Start, React, Tailwind, aliases e Nitro. A configuração atual mantém o entry server em `src/server.ts`. Nunca faça commit de `.env` com chaves reais; configure segredos somente nas variáveis do ambiente de execução.
+
+## Validações realizadas
+
+- lint aprovado, com apenas warnings preexistentes do Fast Refresh;
+- typecheck aprovado;
+- 21 testes automatizados aprovados;
+- build de produção aprovado;
+- modo mock validado;
+- integração real OpenAI validada localmente;
+- integração real OpenAI validada na Vercel;
+- perguntas fora da base sem chamada ao modelo;
+- continuação contextual validada;
+- proteção contra prompt injection validada;
+- ausência de segredos no repositório.
 
 ## Estrutura do Projeto
 
@@ -134,13 +157,24 @@ src/
   types/
 docs/
   arquitetura.md
+  evidencias/README.md
 ```
 
 ## Ferramentas de IA Utilizadas no Desenvolvimento
 
 - **Lovable** — geração inicial da interface e arquitetura.
 - **ChatGPT** — planejamento, engenharia de prompts e revisão do escopo.
-- **Codex** — auditoria, revisão de código, correções, integração server-side e validação técnica.
+- **Codex** — auditoria, revisão de código, correções, integração server-side, documentação final e validação técnica.
+
+## Limitações
+
+- Base de conhecimento fictícia e estática.
+- Ausência de login.
+- Histórico somente no navegador.
+- Rate limit em memória.
+- Ausência de banco de dados.
+- Ausência de embeddings.
+- Aplicação criada para demonstração acadêmica.
 
 ## Identificação Acadêmica
 
