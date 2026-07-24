@@ -32,7 +32,7 @@ Capturas realizadas em 24/07/2026. As imagens pendentes nao foram substituidas p
 
 ## Pendencias de captura
 
-- `04-resposta-real-senha.png`, `06-continuacao-contextual.png` e `09-protecao-prompt-injection.png`: as tentativas reais foram executadas, mas as capturas obtidas ficaram com parte da resposta fora da area visivel. Nao foram mantidas para evitar evidencias cortadas. O limite de tres chamadas reais a OpenAI foi atingido; refaca cada cenario em uma sessao autorizada, aguardando a resposta e garantindo que pergunta, resposta integral e fontes estejam visiveis.
+- `04-resposta-real-senha.png`, `06-continuacao-contextual.png` e `09-protecao-prompt-injection.png`: duas tentativas reais foram executadas para cada cenario, mas as capturas obtidas ficaram com parte da resposta ou das fontes fora da area visivel. Nao foram mantidas para evitar evidencias cortadas. Refaca cada cenario em uma sessao autorizada, aguardando a resposta e garantindo que pergunta, resposta integral e fontes estejam visiveis.
 - `19-deploy-vercel.png` e `20-uso-openai.png`: a automacao nao dispunha de sessao autenticada. Realize somente apos login normal, sem exibir variaveis de ambiente, chaves, tokens ou outros segredos.
 - `21-planejamento-chatgpt.png` a `25-testes-codex.png`: a interface desta conversa nao pode ser capturada pelo codigo do repositorio. Registre manualmente a conversa correspondente, ocultando informacoes pessoais e credenciais.
 
