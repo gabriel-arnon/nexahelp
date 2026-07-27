@@ -24,14 +24,10 @@ Capturas realizadas entre 24/07/2026 e 27/07/2026. As imagens pendentes nao fora
 | 18-pr-documentacao-final.png | PR 3 com atualizacao documental | GitHub publico | 24/07/2026 | Capturado | Finalizacao do projeto |
 | 19-deploy-vercel.png | Deploy de producao com status Ready e dominio | Vercel autenticada | 27/07/2026 | Capturado | Publicacao em producao |
 | 20-uso-openai.png | Painel de consumo sem chaves de API | OpenAI autenticada | 27/07/2026 | Capturado | Monitoramento de uso |
-| 21-planejamento-chatgpt.png | Conversa com planejamento inicial, objetivo e escopo do projeto | Captura manual do usuario | - | Pendente | Planejamento |
-| 22-plano-lovable.png | Plano ou iteracoes realizadas no Lovable | Captura manual do usuario | - | Pendente | Processo de desenvolvimento |
-| 23-auditoria-codex.png | Conversa do Codex com auditoria tecnica e achados | Captura manual do usuario | - | Pendente | Qualidade e revisao |
-| 24-correcao-relevancia-codex.png | Conversa do Codex com correcao de relevancia das fontes ou respostas | Captura manual do usuario | - | Pendente | Refinamento da IA |
-| 25-testes-codex.png | Conversa do Codex com execucao e resultado dos testes | Captura manual do usuario | - | Pendente | Validacao tecnica |
-
-## Pendencias de captura
-
-- `21-planejamento-chatgpt.png` a `25-testes-codex.png`: a interface destas conversas nao pode ser capturada pelo codigo do repositorio. Registre manualmente a conversa correspondente, ocultando informacoes pessoais e credenciais.
+| 21-planejamento-chatgpt.png | Conversa com planejamento inicial, objetivo e escopo do projeto | Captura manual do usuario | 27/07/2026 | Capturado | Planejamento |
+| 22-plano-lovable.png | Plano ou iteracoes realizadas no Lovable | Captura manual do usuario | 27/07/2026 | Capturado | Processo de desenvolvimento |
+| 23-auditoria-codex.png | Conversa do Codex com auditoria tecnica e achados | Captura manual do usuario | 27/07/2026 | Capturado | Qualidade e revisao |
+| 24-correcao-relevancia-codex.png | Conversa do Codex com correcao de relevancia das fontes ou respostas | Captura manual do usuario | 27/07/2026 | Capturado | Refinamento da IA |
+| 25-testes-codex.png | Conversa do Codex com execucao e resultado dos testes | Captura manual do usuario | 27/07/2026 | Capturado | Validacao tecnica |
 
 Nenhuma imagem deste diretorio contem arquivos `.env`, chaves de API, cookies, tokens, cabecalhos de autorizacao ou credenciais.
