@@ -33,6 +33,17 @@ Demonstrar, no contexto da disciplina **IA Generativa Aplicada ao Desenvolviment
 
 A aplicação permite perguntar em linguagem natural, consultar uma base fictícia de 20 documentos corporativos simulados, receber respostas geradas por IA, conferir fontes clicáveis, manter histórico local no navegador e visualizar orientações de governança para uso responsável.
 
+## Prints e Evidências
+
+As capturas finais da aplicação, do processo de desenvolvimento assistido por IA, do GitHub, da Vercel e do uso da OpenAI estão organizadas em `docs/evidencias/`.
+
+- Manifesto das evidências: [`docs/evidencias/manifesto.md`](docs/evidencias/manifesto.md)
+- Página inicial desktop: [`01-home-desktop.png`](docs/evidencias/01-home-desktop.png)
+- Assistente com resposta real: [`04-resposta-real-senha.png`](docs/evidencias/04-resposta-real-senha.png)
+- Fonte clicável aberta: [`05-fonte-clicavel-aberta.png`](docs/evidencias/05-fonte-clicavel-aberta.png)
+- Governança: [`12-governanca.png`](docs/evidencias/12-governanca.png)
+- Evidências do desenvolvimento com IA: [`21-planejamento-chatgpt.png`](docs/evidencias/21-planejamento-chatgpt.png), [`22-plano-lovable.png`](docs/evidencias/22-plano-lovable.png), [`23-auditoria-codex.png`](docs/evidencias/23-auditoria-codex.png), [`24-correcao-relevancia-codex.png`](docs/evidencias/24-correcao-relevancia-codex.png), [`25-testes-codex.png`](docs/evidencias/25-testes-codex.png)
+
 ## Tecnologias Utilizadas
 
 - [TanStack Start](https://tanstack.com/start) v1
